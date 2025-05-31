@@ -1,4 +1,4 @@
-import api from './authService';
+import api from './api';
 
 const partnerService = {
   // Get available partners (Manager only)

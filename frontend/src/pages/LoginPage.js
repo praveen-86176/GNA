@@ -23,6 +23,7 @@ import Button from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { fadeInUp, fadeInDown, staggerContainer, staggerItem } from '../utils/animations';
 import { cn } from '../utils/cn';
+import zomatoLogo from '../assets/zomato-logo.svg';
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -235,14 +236,14 @@ const AuthPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 flex">
       {/* Left Side - Features */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-red-600/20 via-orange-600/20 to-pink-600/20"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-green-600/20 via-emerald-600/20 to-teal-600/20"></div>
         
         {/* Animated background shapes */}
         <motion.div
-          className="absolute top-20 left-20 w-64 h-64 bg-gradient-to-r from-red-500/30 to-orange-500/30 rounded-full blur-3xl"
+          className="absolute top-20 left-20 w-64 h-64 bg-gradient-to-r from-green-500/30 to-emerald-500/30 rounded-full blur-3xl"
           animate={{
             scale: [1, 1.2, 1],
             rotate: [0, 180, 360]
@@ -254,7 +255,7 @@ const AuthPage = () => {
           }}
         />
         <motion.div
-          className="absolute bottom-20 right-20 w-72 h-72 bg-gradient-to-r from-purple-500/30 to-pink-500/30 rounded-full blur-3xl"
+          className="absolute bottom-20 right-20 w-72 h-72 bg-gradient-to-r from-emerald-500/30 to-teal-500/30 rounded-full blur-3xl"
           animate={{
             scale: [1.2, 1, 1.2],
             rotate: [360, 180, 0]
@@ -273,19 +274,15 @@ const AuthPage = () => {
             transition={{ duration: 0.6 }}
           >
             <div className="flex items-center mb-8">
-              <div className="w-16 h-16 bg-gradient-to-r from-red-500 to-orange-500 rounded-2xl flex items-center justify-center shadow-2xl">
-                <span className="text-2xl font-bold text-white">Z</span>
-              </div>
-              <div className="ml-4">
-                <h1 className="text-3xl font-bold text-white">Zomato Ops Pro</h1>
-                <p className="text-lg text-gray-300">Restaurant Operations Hub</p>
+              <div className="w-24 h-24 bg-white rounded-2xl flex items-center justify-center shadow-2xl">
+                <img src={zomatoLogo} alt="Zomato Logo" className="w-16 h-16" />
               </div>
             </div>
             
-            <h2 className="text-4xl font-bold text-white mb-6">
+            <h2 className="text-4xl font-bold text-gray-900 mb-6">
               Transform Your Restaurant Operations
             </h2>
-            <p className="text-xl text-gray-300 mb-12 leading-relaxed">
+            <p className="text-xl text-gray-600 mb-12 leading-relaxed">
               Join thousands of restaurants and delivery partners who trust our platform for seamless operations, real-time tracking, and data-driven insights.
             </p>
           </motion.div>
@@ -300,15 +297,15 @@ const AuthPage = () => {
               <motion.div
                 key={index}
                 variants={staggerItem}
-                className="flex items-start space-x-4 p-4 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all duration-300"
+                className="flex items-start space-x-4 p-4 rounded-2xl bg-white/80 backdrop-blur-sm border border-green-100 hover:bg-white/90 transition-all duration-300"
                 whileHover={{ scale: 1.02, x: 10 }}
               >
                 <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${feature.color} flex items-center justify-center shadow-lg`}>
                   <feature.icon className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-white mb-1">{feature.title}</h3>
-                  <p className="text-gray-300">{feature.description}</p>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-1">{feature.title}</h3>
+                  <p className="text-gray-600">{feature.description}</p>
                 </div>
               </motion.div>
             ))}
@@ -319,22 +316,22 @@ const AuthPage = () => {
       {/* Right Side - Auth Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center px-6 py-12">
         <motion.div
-          className="w-full max-w-md"
+          className="w-full max-w-md sticky top-0 max-h-screen overflow-y-auto"
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <Card className="p-8 bg-white/95 backdrop-blur-sm shadow-2xl border-0">
+          <Card className="p-8 bg-white/95 backdrop-blur-sm shadow-2xl border border-green-100/50 rounded-2xl hover:shadow-green-100/50 transition-all duration-300">
             {/* Auth Toggle */}
             <div className="flex mb-8">
-              <div className="flex bg-gray-100 rounded-xl p-1 w-full">
+              <div className="flex bg-green-50 rounded-xl p-1 w-full shadow-sm">
                 <button
                   type="button"
                   onClick={() => setIsLogin(true)}
                   className={cn(
                     "flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200",
                     isLogin
-                      ? "bg-white text-gray-900 shadow-sm"
+                      ? "bg-white text-green-700 shadow-sm"
                       : "text-gray-500 hover:text-gray-700"
                   )}
                 >
@@ -346,7 +343,7 @@ const AuthPage = () => {
                   className={cn(
                     "flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200",
                     !isLogin
-                      ? "bg-white text-gray-900 shadow-sm"
+                      ? "bg-white text-green-700 shadow-sm"
                       : "text-gray-500 hover:text-gray-700"
                   )}
                 >
@@ -363,19 +360,21 @@ const AuthPage = () => {
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3 }}
               >
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                  {isLogin ? 'Welcome back!' : 'Create your account'}
-                </h2>
-                <p className="text-gray-600 mb-8">
-                  {isLogin 
-                    ? 'Sign in to access your dashboard' 
-                    : 'Join our platform and start managing your operations'
-                  }
-                </p>
+                <div className="text-center mb-8">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                    {isLogin ? 'Welcome back!' : 'Create your account'}
+                  </h2>
+                  <p className="text-gray-600">
+                    {isLogin 
+                      ? 'Sign in to access your dashboard' 
+                      : 'Join our platform and start managing your operations'
+                    }
+                  </p>
+                </div>
 
                 {/* Role Selection for Signup */}
                 {!isLogin && (
-                  <div className="mb-6">
+                  <div className="mb-8">
                     <label className="block text-sm font-medium text-gray-700 mb-3">
                       I am a
                     </label>
@@ -384,9 +383,9 @@ const AuthPage = () => {
                         type="button"
                         onClick={() => handleRoleChange('manager')}
                         className={cn(
-                          "p-4 rounded-xl border-2 transition-all duration-200 flex flex-col items-center space-y-2",
+                          "p-4 rounded-xl border-2 transition-all duration-200 flex flex-col items-center space-y-2 hover:shadow-md",
                           selectedRole === 'manager'
-                            ? "border-red-500 bg-red-50 text-red-700"
+                            ? "border-green-500 bg-green-50 text-green-700"
                             : "border-gray-200 hover:border-gray-300 text-gray-600"
                         )}
                       >
@@ -397,9 +396,9 @@ const AuthPage = () => {
                         type="button"
                         onClick={() => handleRoleChange('partner')}
                         className={cn(
-                          "p-4 rounded-xl border-2 transition-all duration-200 flex flex-col items-center space-y-2",
+                          "p-4 rounded-xl border-2 transition-all duration-200 flex flex-col items-center space-y-2 hover:shadow-md",
                           selectedRole === 'partner'
-                            ? "border-red-500 bg-red-50 text-red-700"
+                            ? "border-green-500 bg-green-50 text-green-700"
                             : "border-gray-200 hover:border-gray-300 text-gray-600"
                         )}
                       >
@@ -411,43 +410,42 @@ const AuthPage = () => {
                 )}
 
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* Name field for signup */}
+                  {/* Form fields with updated styling */}
                   {!isLogin && (
-                    <div>
+                    <div className="relative group">
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Full Name
                       </label>
                       <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <UserIcon className="h-5 w-5 text-gray-400" />
+                          <UserIcon className="h-5 w-5 text-gray-400 group-focus-within:text-green-500 transition-colors" />
                         </div>
                         <input
                           type="text"
                           name="name"
                           value={formData.name}
                           onChange={handleChange}
-                          className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
+                          className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200"
                           placeholder="Enter your full name"
                         />
                       </div>
                     </div>
                   )}
 
-                  {/* Email field */}
-                  <div>
+                  <div className="relative group">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Email Address
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <EnvelopeIcon className="h-5 w-5 text-gray-400" />
+                        <EnvelopeIcon className="h-5 w-5 text-gray-400 group-focus-within:text-green-500 transition-colors" />
                       </div>
                       <input
                         type="email"
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
-                        className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
+                        className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200"
                         placeholder="Enter your email"
                       />
                     </div>
@@ -566,21 +564,21 @@ const AuthPage = () => {
                     </>
                   )}
 
-                  {/* Password field */}
-                  <div>
+                  {/* Password field with updated styling */}
+                  <div className="relative group">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Password
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <LockClosedIcon className="h-5 w-5 text-gray-400" />
+                        <LockClosedIcon className="h-5 w-5 text-gray-400 group-focus-within:text-green-500 transition-colors" />
                       </div>
                       <input
                         type={showPassword ? "text" : "password"}
                         name="password"
                         value={formData.password}
                         onChange={handleChange}
-                        className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
+                        className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200"
                         placeholder="Enter your password"
                       />
                       <button
@@ -589,9 +587,9 @@ const AuthPage = () => {
                         onClick={() => setShowPassword(!showPassword)}
                       >
                         {showPassword ? (
-                          <EyeSlashIcon className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                          <EyeSlashIcon className="h-5 w-5 text-gray-400 hover:text-green-500 transition-colors" />
                         ) : (
-                          <EyeIcon className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                          <EyeIcon className="h-5 w-5 text-gray-400 hover:text-green-500 transition-colors" />
                         )}
                       </button>
                     </div>
@@ -630,26 +628,26 @@ const AuthPage = () => {
                     </div>
                   )}
 
-                  {/* Submit Button */}
+                  {/* Submit Button with updated styling */}
                   <Button
                     type="submit"
                     loading={isLoading}
                     fullWidth
                     size="lg"
-                    className="bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                    className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
                   >
                     {isLogin ? 'Sign In' : 'Create Account'}
                   </Button>
 
-                  {/* Terms for signup */}
+                  {/* Terms with updated styling */}
                   {!isLogin && (
                     <p className="text-sm text-gray-600 text-center">
                       By creating an account, you agree to our{' '}
-                      <a href="#" className="text-red-600 hover:text-red-700 font-medium">
+                      <a href="#" className="text-green-600 hover:text-green-700 font-medium">
                         Terms of Service
                       </a>{' '}
                       and{' '}
-                      <a href="#" className="text-red-600 hover:text-red-700 font-medium">
+                      <a href="#" className="text-green-600 hover:text-green-700 font-medium">
                         Privacy Policy
                       </a>
                     </p>

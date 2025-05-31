@@ -1,66 +1,4 @@
-import axios from 'axios';
-
-// Create axios instance with base configuration
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
-
-const api = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  timeout: 10000,
-});
-
-// Request interceptor to add auth token
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    console.log(`📡 ${config.method?.toUpperCase()} ${config.url}`, config.data ? { data: config.data } : '');
-    return config;
-  },
-  (error) => {
-    console.error('❌ Request interceptor error:', error);
-    return Promise.reject(error);
-  }
-);
-
-// Response interceptor to handle common errors
-api.interceptors.response.use(
-  (response) => {
-    console.log(`✅ ${response.config.method?.toUpperCase()} ${response.config.url} - ${response.status}`, response.data);
-    return response;
-  },
-  (error) => {
-    console.error(`❌ ${error.config?.method?.toUpperCase()} ${error.config?.url} - ${error.response?.status}`, {
-      message: error.message,
-      response: error.response?.data,
-      status: error.response?.status
-    });
-    
-    // Handle unauthorized errors
-    if (error.response?.status === 401) {
-      console.log('🔒 Unauthorized access - clearing auth data');
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      localStorage.removeItem('role');
-      
-      // Only redirect if not already on login page
-      if (window.location.pathname !== '/login') {
-        window.location.href = '/login';
-      }
-    }
-    
-    // Handle network errors
-    if (!error.response) {
-      error.message = 'Network error. Please check your connection and try again.';
-    }
-    
-    return Promise.reject(error);
-  }
-);
+import api from './api';
 
 // Auth service object
 export const authService = {
@@ -126,76 +64,49 @@ export const authService = {
     }
   },
 
-  // Login user (Manager or Partner)
-  login: async (credentials) => {
-    try {
-      console.log('🔐 Attempting login...');
-      const response = await api.post('/auth/login', {
-        email: credentials.email?.trim(),
-        password: credentials.password
-      });
-      
-      console.log('📨 Login response received:', response.data);
-      
-      // Validate response structure
-      if (!response.data.success) {
-        throw new Error(response.data.message || 'Login failed - Invalid credentials');
-      }
-      
-      if (!response.data.data || !response.data.data.token || !response.data.data.user) {
-        throw new Error('Login failed - Invalid response format');
-      }
-      
-      // Set auth data for future requests
-      const { token, user, role } = response.data.data;
-      authService.setAuthData(token, user, role);
-      
-      console.log('✅ Login successful for:', user.name);
-      return response.data;
-    } catch (error) {
-      console.error('❌ Login error:', error);
-      
-      // Extract meaningful error message
-      let errorMessage = 'Login failed';
-      if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      } else if (error.message) {
-        errorMessage = error.message;
-      } else if (error.response?.status === 401) {
-        errorMessage = 'Invalid email or password';
-      } else if (error.response?.status >= 500) {
-        errorMessage = 'Server error. Please try again later.';
-      } else if (!error.response) {
-        errorMessage = 'Network error. Please check your connection.';
-      }
-      
-      const enhancedError = new Error(errorMessage);
-      enhancedError.response = error.response;
-      enhancedError.status = error.response?.status;
-      throw enhancedError;
-    }
-  },
-
   // Register Manager
   registerManager: async (userData) => {
     try {
-      console.log('📝 Registering manager...');
-      const response = await api.post('/auth/register/manager', userData);
+      console.log('📝 Registering manager:', userData);
       
-      // Set auth data for future requests
-      if (response.data.success && response.data.data.token) {
+      // Ensure all required fields are present
+      const requiredFields = ['name', 'email', 'password', 'phone'];
+      const missingFields = requiredFields.filter(field => !userData[field]);
+      
+      if (missingFields.length > 0) {
+        throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
+      }
+      
+      const response = await api.post('/auth/register/manager', {
+        name: userData.name.trim(),
+        email: userData.email.trim().toLowerCase(),
+        password: userData.password,
+        phone: userData.phone.trim(),
+        role: 'manager'
+      });
+      
+      console.log('✅ Manager registration successful:', response.data);
+      
+      // Set auth data if registration was successful
+      if (response.data.success && response.data.data?.token) {
         const { token, user, role } = response.data.data;
         authService.setAuthData(token, user, role);
-        console.log('✅ Manager registration successful for:', user.name);
       }
       
       return response.data;
     } catch (error) {
       console.error('❌ Manager registration error:', error);
-      const errorMessage = error.response?.data?.message || error.message || 'Registration failed';
-      const enhancedError = new Error(errorMessage);
-      enhancedError.response = error.response;
-      throw enhancedError;
+      
+      if (error.response) {
+        // Server responded with error
+        throw new Error(error.response.data.message || 'Registration failed');
+      } else if (error.request) {
+        // Request made but no response
+        throw new Error('No response from server. Please check your connection.');
+      } else {
+        // Request setup error
+        throw new Error(error.message || 'An unexpected error occurred.');
+      }
     }
   },
 
@@ -203,22 +114,78 @@ export const authService = {
   registerPartner: async (userData) => {
     try {
       console.log('📝 Registering partner...');
-      const response = await api.post('/auth/register/partner', userData);
       
-      // Set auth data for future requests
-      if (response.data.success && response.data.data.token) {
+      // Ensure all required fields are present
+      const requiredFields = ['name', 'email', 'password', 'phone', 'vehicleType', 'vehicleNumber'];
+      const missingFields = requiredFields.filter(field => !userData[field]);
+      
+      if (missingFields.length > 0) {
+        throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
+      }
+      
+      const response = await api.post('/auth/register/partner', {
+        name: userData.name.trim(),
+        email: userData.email.trim().toLowerCase(),
+        password: userData.password,
+        phone: userData.phone.trim(),
+        vehicleType: userData.vehicleType,
+        vehicleNumber: userData.vehicleNumber,
+        role: 'partner'
+      });
+      
+      console.log('✅ Partner registration successful:', response.data);
+      
+      // Set auth data if registration was successful
+      if (response.data.success && response.data.data?.token) {
         const { token, user, role } = response.data.data;
         authService.setAuthData(token, user, role);
-        console.log('✅ Partner registration successful for:', user.name);
       }
       
       return response.data;
     } catch (error) {
       console.error('❌ Partner registration error:', error);
-      const errorMessage = error.response?.data?.message || error.message || 'Registration failed';
-      const enhancedError = new Error(errorMessage);
-      enhancedError.response = error.response;
-      throw enhancedError;
+      
+      if (error.response) {
+        // Server responded with error
+        throw new Error(error.response.data.message || 'Registration failed');
+      } else if (error.request) {
+        // Request made but no response
+        throw new Error('No response from server. Please check your connection.');
+      } else {
+        // Request setup error
+        throw new Error(error.message || 'An unexpected error occurred.');
+      }
+    }
+  },
+
+  // Login user
+  login: async (credentials) => {
+    try {
+      console.log('🔐 Attempting login...');
+      const response = await api.post('/auth/login', {
+        email: credentials.email?.trim().toLowerCase(),
+        password: credentials.password
+      });
+      
+      console.log('📨 Login response received:', response.data);
+      
+      if (response.data.success && response.data.data?.token) {
+        const { token, user, role } = response.data.data;
+        authService.setAuthData(token, user, role);
+        console.log('✅ Login successful for:', user.name);
+      }
+      
+      return response.data;
+    } catch (error) {
+      console.error('❌ Login error:', error);
+      
+      if (error.response) {
+        throw new Error(error.response.data.message || 'Login failed');
+      } else if (error.request) {
+        throw new Error('No response from server. Please check your connection.');
+      } else {
+        throw new Error(error.message || 'An unexpected error occurred.');
+      }
     }
   },
 
@@ -227,9 +194,9 @@ export const authService = {
     try {
       console.log('🚪 Logging out...');
       await api.post('/auth/logout');
-      console.log('✅ Logout API call successful');
+      console.log('✅ Logout successful');
     } catch (error) {
-      console.warn('⚠️ Logout API call failed (proceeding anyway):', error.message);
+      console.warn('⚠️ Logout API call failed:', error.message);
     } finally {
       authService.removeAuthData();
       console.log('✅ Local auth data cleared');
@@ -243,54 +210,33 @@ export const authService = {
       return response.data;
     } catch (error) {
       console.error('❌ Get profile error:', error);
-      const errorMessage = error.response?.data?.message || error.message || 'Failed to get profile';
-      const enhancedError = new Error(errorMessage);
-      enhancedError.response = error.response;
-      throw enhancedError;
+      throw new Error(error.response?.data?.message || 'Failed to get profile');
     }
   },
 
   // Update user profile
   updateProfile: async (userData) => {
     try {
+      console.log('📝 Updating profile');
       const response = await api.put('/auth/profile', userData);
+      console.log('✅ Profile updated successfully');
       return response.data;
     } catch (error) {
       console.error('❌ Update profile error:', error);
-      const errorMessage = error.response?.data?.message || error.message || 'Failed to update profile';
-      const enhancedError = new Error(errorMessage);
-      enhancedError.response = error.response;
-      throw enhancedError;
+      throw new Error(error.response?.data?.message || 'Failed to update profile');
     }
   },
 
   // Change password
   changePassword: async (passwordData) => {
     try {
+      console.log('🔐 Changing password');
       const response = await api.put('/auth/change-password', passwordData);
+      console.log('✅ Password changed successfully');
       return response.data;
     } catch (error) {
       console.error('❌ Change password error:', error);
-      const errorMessage = error.response?.data?.message || error.message || 'Failed to change password';
-      const enhancedError = new Error(errorMessage);
-      enhancedError.response = error.response;
-      throw enhancedError;
-    }
-  },
-
-  // Verify token
-  verifyToken: async () => {
-    try {
-      console.log('🔍 Verifying token...');
-      const response = await api.get('/auth/verify');
-      console.log('✅ Token verification successful');
-      return response.data;
-    } catch (error) {
-      console.error('❌ Token verification failed:', error);
-      const errorMessage = error.response?.data?.message || error.message || 'Token verification failed';
-      const enhancedError = new Error(errorMessage);
-      enhancedError.response = error.response;
-      throw enhancedError;
+      throw new Error(error.response?.data?.message || 'Failed to change password');
     }
   },
 
@@ -315,7 +261,4 @@ export const authService = {
       return null;
     }
   }
-};
-
-// Export axios instance for other services
-export default api; 
+}; 

@@ -275,7 +275,7 @@ const Settings = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 py-8 px-4 sm:px-6 lg:px-8">
       <motion.div
         className="max-w-7xl mx-auto"
         variants={staggerContainer}
@@ -303,7 +303,7 @@ const Settings = () => {
                       className={cn(
                         "w-full text-left px-4 py-3 text-sm font-medium transition-colors flex items-center space-x-3 first:rounded-t-lg last:rounded-b-lg",
                         activeTab === tab.id
-                          ? "bg-red-50 text-red-700 border-r-2 border-red-500"
+                          ? "bg-green-50 text-green-700 border-r-2 border-green-500"
                           : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                       )}
                     >
@@ -550,7 +550,7 @@ const Settings = () => {
                             onClick={() => setTheme('light')}
                             className={cn(
                               "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
-                              !isDarkMode && !isSystemPreference ? "bg-red-600" : "bg-gray-200 dark:bg-gray-700"
+                              !isDarkMode && !isSystemPreference ? "bg-green-600" : "bg-gray-200 dark:bg-gray-700"
                             )}
                           >
                             <span
@@ -577,7 +577,7 @@ const Settings = () => {
                             onClick={() => setTheme('dark')}
                             className={cn(
                               "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
-                              isDarkMode && !isSystemPreference ? "bg-red-600" : "bg-gray-200 dark:bg-gray-700"
+                              isDarkMode && !isSystemPreference ? "bg-green-600" : "bg-gray-200 dark:bg-gray-700"
                             )}
                           >
                             <span
@@ -604,7 +604,7 @@ const Settings = () => {
                             onClick={() => useSystemPreference()}
                             className={cn(
                               "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
-                              isSystemPreference ? "bg-red-600" : "bg-gray-200 dark:bg-gray-700"
+                              isSystemPreference ? "bg-green-600" : "bg-gray-200 dark:bg-gray-700"
                             )}
                           >
                             <span
@@ -636,7 +636,7 @@ const Settings = () => {
                             onClick={() => updateDashboardPreference('compactView', !preferences.dashboard.compactView)}
                             className={cn(
                               "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
-                              preferences.dashboard.compactView ? "bg-red-600" : "bg-gray-200 dark:bg-gray-700"
+                              preferences.dashboard.compactView ? "bg-green-600" : "bg-gray-200 dark:bg-gray-700"
                             )}
                           >
                             <span
@@ -660,7 +660,7 @@ const Settings = () => {
                             onClick={() => updateDashboardPreference('showMetrics', !preferences.dashboard.showMetrics)}
                             className={cn(
                               "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
-                              preferences.dashboard.showMetrics ? "bg-red-600" : "bg-gray-200 dark:bg-gray-700"
+                              preferences.dashboard.showMetrics ? "bg-green-600" : "bg-gray-200 dark:bg-gray-700"
                             )}
                           >
                             <span
@@ -709,7 +709,7 @@ const Settings = () => {
                             onClick={() => toggleNotification('newOrders')}
                             className={cn(
                               "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
-                              notificationSettings.newOrders ? "bg-red-600" : "bg-gray-200 dark:bg-gray-700"
+                              notificationSettings.newOrders ? "bg-green-600" : "bg-gray-200 dark:bg-gray-700"
                             )}
                           >
                             <span
@@ -736,7 +736,7 @@ const Settings = () => {
                             onClick={() => toggleNotification('orderUpdates')}
                             className={cn(
                               "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
-                              notificationSettings.orderUpdates ? "bg-red-600" : "bg-gray-200 dark:bg-gray-700"
+                              notificationSettings.orderUpdates ? "bg-green-600" : "bg-gray-200 dark:bg-gray-700"
                             )}
                           >
                             <span
@@ -764,7 +764,7 @@ const Settings = () => {
                               onClick={() => toggleNotification('partnerUpdates')}
                               className={cn(
                                 "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
-                                notificationSettings.partnerUpdates ? "bg-red-600" : "bg-gray-200 dark:bg-gray-700"
+                                notificationSettings.partnerUpdates ? "bg-green-600" : "bg-gray-200 dark:bg-gray-700"
                               )}
                             >
                               <span
@@ -792,7 +792,7 @@ const Settings = () => {
                             onClick={() => toggleNotification('orderAssignments')}
                             className={cn(
                               "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
-                              notificationSettings.orderAssignments ? "bg-red-600" : "bg-gray-200 dark:bg-gray-700"
+                              notificationSettings.orderAssignments ? "bg-green-600" : "bg-gray-200 dark:bg-gray-700"
                             )}
                           >
                             <span
@@ -827,7 +827,7 @@ const Settings = () => {
                             onClick={() => toggleNotification('emailNotifications')}
                             className={cn(
                               "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
-                              notificationSettings.emailNotifications ? "bg-red-600" : "bg-gray-200 dark:bg-gray-700"
+                              notificationSettings.emailNotifications ? "bg-green-600" : "bg-gray-200 dark:bg-gray-700"
                             )}
                           >
                             <span
@@ -854,7 +854,7 @@ const Settings = () => {
                             onClick={() => toggleNotification('smsNotifications')}
                             className={cn(
                               "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
-                              notificationSettings.smsNotifications ? "bg-red-600" : "bg-gray-200 dark:bg-gray-700"
+                              notificationSettings.smsNotifications ? "bg-green-600" : "bg-gray-200 dark:bg-gray-700"
                             )}
                           >
                             <span
@@ -881,7 +881,7 @@ const Settings = () => {
                             onClick={() => toggleNotification('pushNotifications')}
                             className={cn(
                               "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
-                              notificationSettings.pushNotifications ? "bg-red-600" : "bg-gray-200 dark:bg-gray-700"
+                              notificationSettings.pushNotifications ? "bg-green-600" : "bg-gray-200 dark:bg-gray-700"
                             )}
                           >
                             <span
@@ -916,7 +916,7 @@ const Settings = () => {
                             onClick={() => toggleNotification('soundAlerts')}
                             className={cn(
                               "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
-                              notificationSettings.soundAlerts ? "bg-red-600" : "bg-gray-200 dark:bg-gray-700"
+                              notificationSettings.soundAlerts ? "bg-green-600" : "bg-gray-200 dark:bg-gray-700"
                             )}
                           >
                             <span
@@ -934,7 +934,7 @@ const Settings = () => {
                       <Button 
                         type="submit" 
                         disabled={loading}
-                        className="bg-red-600 hover:bg-red-700 text-white px-6 py-2"
+                        className="bg-green-600 hover:bg-green-700 text-white px-6 py-2"
                       >
                         {loading ? <Loading size="sm" /> : 'Save Notification Settings'}
                       </Button>
@@ -968,7 +968,7 @@ const Settings = () => {
                             onClick={() => updateDashboardPreference('autoRefresh', !preferences.dashboard.autoRefresh)}
                             className={cn(
                               "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
-                              preferences.dashboard.autoRefresh ? "bg-red-600" : "bg-gray-200"
+                              preferences.dashboard.autoRefresh ? "bg-green-600" : "bg-gray-200"
                             )}
                           >
                             <span
@@ -1009,7 +1009,7 @@ const Settings = () => {
                             onClick={() => updateDashboardPreference('showMetrics', !preferences.dashboard.showMetrics)}
                             className={cn(
                               "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
-                              preferences.dashboard.showMetrics ? "bg-red-600" : "bg-gray-200"
+                              preferences.dashboard.showMetrics ? "bg-green-600" : "bg-gray-200"
                             )}
                           >
                             <span
@@ -1031,7 +1031,7 @@ const Settings = () => {
                             onClick={() => updateDashboardPreference('compactView', !preferences.dashboard.compactView)}
                             className={cn(
                               "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
-                              preferences.dashboard.compactView ? "bg-red-600" : "bg-gray-200"
+                              preferences.dashboard.compactView ? "bg-green-600" : "bg-gray-200"
                             )}
                           >
                             <span
@@ -1077,7 +1077,7 @@ const Settings = () => {
                               onClick={() => updateOrderPreference('autoAssignPartners', !preferences.orders.autoAssignPartners)}
                               className={cn(
                                 "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
-                                preferences.orders.autoAssignPartners ? "bg-red-600" : "bg-gray-200"
+                                preferences.orders.autoAssignPartners ? "bg-green-600" : "bg-gray-200"
                               )}
                             >
                               <span
@@ -1099,7 +1099,7 @@ const Settings = () => {
                               onClick={() => updateOrderPreference('requireConfirmation', !preferences.orders.requireConfirmation)}
                               className={cn(
                                 "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
-                                preferences.orders.requireConfirmation ? "bg-red-600" : "bg-gray-200"
+                                preferences.orders.requireConfirmation ? "bg-green-600" : "bg-gray-200"
                               )}
                             >
                               <span
@@ -1121,7 +1121,7 @@ const Settings = () => {
                               onClick={() => updateOrderPreference('priorityOrders', !preferences.orders.priorityOrders)}
                               className={cn(
                                 "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
-                                preferences.orders.priorityOrders ? "bg-red-600" : "bg-gray-200"
+                                preferences.orders.priorityOrders ? "bg-green-600" : "bg-gray-200"
                               )}
                             >
                               <span
@@ -1140,7 +1140,7 @@ const Settings = () => {
                       <Button
                         type="submit"
                         loading={loading}
-                        className="bg-red-600 hover:bg-red-700 text-white"
+                        className="bg-green-600 hover:bg-green-700 text-white"
                       >
                         Save Preferences
                       </Button>
@@ -1288,7 +1288,7 @@ const Settings = () => {
                       <Button
                         type="submit"
                         loading={loading}
-                        className="bg-red-600 hover:bg-red-700 text-white"
+                        className="bg-green-600 hover:bg-green-700 text-white"
                       >
                         Change Password
                       </Button>

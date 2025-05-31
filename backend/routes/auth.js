@@ -13,6 +13,25 @@ const {
 const { auth } = require('../middleware/auth');
 
 const router = express.Router();
+// @route   GET /api/auth/test
+// @desc    Test auth routes are working  
+// @access  Public
+router.get('/test', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Auth routes are working!',
+    availableRoutes: [
+      'POST /api/auth/register/manager',
+      'POST /api/auth/register/partner', 
+      'POST /api/auth/login',
+      'GET /api/auth/profile (requires auth)',
+      'PUT /api/auth/profile (requires auth)', 
+      'PUT /api/auth/change-password (requires auth)',
+      'POST /api/auth/logout (requires auth)',
+      'GET /api/auth/verify (requires auth)'
+    ]
+  });
+});
 
 // Validation middleware
 const registerValidation = [
