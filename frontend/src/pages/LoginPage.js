@@ -236,7 +236,7 @@ const AuthPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 flex">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 flex flex-col lg:flex-row">
       {/* Left Side - Features */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-green-600/20 via-emerald-600/20 to-teal-600/20"></div>
@@ -267,28 +267,29 @@ const AuthPage = () => {
           }}
         />
 
-        <div className="relative z-10 flex flex-col justify-center px-12 py-12">
+        <div className="relative z-10 flex flex-col justify-center px-12 py-8 h-full">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
+            className="mb-6"
           >
-            <div className="flex items-center mb-8">
-              <div className="w-24 h-24 bg-white rounded-2xl flex items-center justify-center shadow-2xl">
-                <img src={zomatoLogo} alt="Zomato Logo" className="w-16 h-16" />
+            <div className="flex items-center mb-4">
+              <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center shadow-2xl">
+                <img src={zomatoLogo} alt="Zomato Logo" className="w-14 h-14" />
               </div>
             </div>
             
-            <h2 className="text-4xl font-bold text-gray-900 mb-6">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
               Transform Your Restaurant Operations
             </h2>
-            <p className="text-xl text-gray-600 mb-12 leading-relaxed">
+            <p className="text-lg text-gray-600 mb-6 leading-relaxed">
               Join thousands of restaurants and delivery partners who trust our platform for seamless operations, real-time tracking, and data-driven insights.
             </p>
           </motion.div>
 
           <motion.div
-            className="grid grid-cols-1 gap-6"
+            className="grid grid-cols-1 gap-4"
             variants={staggerContainer}
             initial="initial"
             animate="animate"
@@ -297,15 +298,15 @@ const AuthPage = () => {
               <motion.div
                 key={index}
                 variants={staggerItem}
-                className="flex items-start space-x-4 p-4 rounded-2xl bg-white/80 backdrop-blur-sm border border-green-100 hover:bg-white/90 transition-all duration-300"
+                className="flex items-start space-x-3 p-3 rounded-xl bg-white/80 backdrop-blur-sm border border-green-100 hover:bg-white/90 transition-all duration-300"
                 whileHover={{ scale: 1.02, x: 10 }}
               >
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${feature.color} flex items-center justify-center shadow-lg`}>
-                  <feature.icon className="h-6 w-6 text-white" />
+                <div className={`w-10 h-10 rounded-lg bg-gradient-to-r ${feature.color} flex items-center justify-center shadow-lg`}>
+                  <feature.icon className="h-5 w-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-1">{feature.title}</h3>
-                  <p className="text-gray-600">{feature.description}</p>
+                  <h3 className="text-base font-semibold text-gray-900 mb-0.5">{feature.title}</h3>
+                  <p className="text-sm text-gray-600">{feature.description}</p>
                 </div>
               </motion.div>
             ))}
@@ -314,22 +315,22 @@ const AuthPage = () => {
       </div>
 
       {/* Right Side - Auth Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center px-6 py-12">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-4 lg:p-8">
         <motion.div
-          className="w-full max-w-md sticky top-0 max-h-screen overflow-y-auto"
+          className="w-full max-w-md"
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <Card className="p-8 bg-white/95 backdrop-blur-sm shadow-2xl border border-green-100/50 rounded-2xl hover:shadow-green-100/50 transition-all duration-300">
+          <Card className="p-4 sm:p-6 lg:p-8 bg-white/95 backdrop-blur-sm shadow-2xl border border-green-100/50 rounded-2xl hover:shadow-green-100/50 transition-all duration-300">
             {/* Auth Toggle */}
-            <div className="flex mb-8">
+            <div className="flex mb-6 sm:mb-8">
               <div className="flex bg-green-50 rounded-xl p-1 w-full shadow-sm">
                 <button
                   type="button"
                   onClick={() => setIsLogin(true)}
                   className={cn(
-                    "flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200",
+                    "flex-1 px-3 sm:px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200",
                     isLogin
                       ? "bg-white text-green-700 shadow-sm"
                       : "text-gray-500 hover:text-gray-700"
@@ -341,7 +342,7 @@ const AuthPage = () => {
                   type="button"
                   onClick={() => setIsLogin(false)}
                   className={cn(
-                    "flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200",
+                    "flex-1 px-3 sm:px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200",
                     !isLogin
                       ? "bg-white text-green-700 shadow-sm"
                       : "text-gray-500 hover:text-gray-700"
@@ -359,8 +360,9 @@ const AuthPage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3 }}
+                className="overflow-y-auto max-h-[calc(100vh-200px)]"
               >
-                <div className="text-center mb-8">
+                <div className="text-center mb-6 sm:mb-8">
                   <h2 className="text-2xl font-bold text-gray-900 mb-2">
                     {isLogin ? 'Welcome back!' : 'Create your account'}
                   </h2>
