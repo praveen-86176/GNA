@@ -182,14 +182,14 @@ const DashboardPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-[#e11d48] to-[#9333ea] flex items-center justify-center">
         <Loading size="lg" text="Loading dashboard analytics..." />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
+    <div className="min-h-screen bg-gradient-to-br from-[#e11d48] to-[#9333ea]">
       <div className="px-4 sm:px-6 lg:px-8 py-8">
         
         {/* Header */}
@@ -210,10 +210,10 @@ const DashboardPage = () => {
                 <BuildingStorefrontIcon className="h-8 w-8 text-white" />
               </motion.div>
               <div>
-                <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">
+                <h1 className="text-2xl lg:text-3xl font-bold text-white dark:text-gray-100">
                   Operations Dashboard 🏢
                 </h1>
-                <p className="text-lg text-gray-600 mt-1">
+                <p className="text-lg text-gray-100 dark:text-gray-200 mt-1">
                   Welcome back, {user?.name}! Here's your restaurant overview.
                 </p>
               </div>
@@ -265,10 +265,10 @@ const DashboardPage = () => {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-blue-600 mb-1">Total Orders</p>
+                    <p className="text-sm font-medium text-blue-600 dark:text-blue-400 mb-1">Total Orders</p>
                     <Counter 
                       value={analytics.totalOrders} 
-                      className="text-2xl lg:text-3xl font-bold text-blue-900"
+                      className="text-2xl lg:text-3xl font-bold text-blue-900 dark:text-blue-100"
                     />
                     <div className="flex items-center mt-2">
                       <ArrowUpIcon className="h-4 w-4 text-green-500 mr-1" />
@@ -324,10 +324,10 @@ const DashboardPage = () => {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-green-600 mb-1">Total Revenue</p>
+                    <p className="text-sm font-medium text-green-600 dark:text-green-400 mb-1">Total Revenue</p>
                     <CurrencyCounter 
                       value={analytics.totalRevenue} 
-                      className="text-2xl lg:text-3xl font-bold text-green-900"
+                      className="text-2xl lg:text-3xl font-bold text-green-900 dark:text-green-100"
                     />
                     <div className="flex items-center mt-2">
                       <ArrowUpIcon className="h-4 w-4 text-green-500 mr-1" />
@@ -526,22 +526,22 @@ const DashboardPage = () => {
                           whileHover={{ x: 4 }}
                         >
                           <div className="flex items-center space-x-4">
-                            <div className="w-12 h-12 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-xl flex items-center justify-center">
-                              <span className="text-indigo-600 font-semibold text-sm">
+                            <div className="w-12 h-12 bg-white/10 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                              <span className="text-white dark:text-gray-100 font-semibold text-sm">
                                 #{order.orderId?.slice(-3) || '000'}
                               </span>
                             </div>
                             <div>
-                              <p className="font-semibold text-gray-900">
+                              <p className="font-semibold text-white dark:text-gray-100">
                                 {order.customerName || 'Unknown Customer'}
                               </p>
-                              <div className="flex items-center space-x-2 text-sm text-gray-500">
+                              <div className="flex items-center space-x-2 text-sm text-gray-200 dark:text-gray-300">
                                 <ClockIcon className="h-4 w-4" />
                                 <span>{formatTime(order.createdAt)}</span>
                                 {order.partner && (
                                   <>
                                     <span>•</span>
-                                    <span className="text-blue-600">{order.partner.name}</span>
+                                    <span className="text-blue-200 dark:text-blue-300">{order.partner.name}</span>
                                   </>
                                 )}
                               </div>

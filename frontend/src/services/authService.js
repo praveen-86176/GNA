@@ -231,12 +231,23 @@ export const authService = {
   changePassword: async (passwordData) => {
     try {
       console.log('🔐 Changing password');
+      
+      // Validate required fields
+      if (!passwordData.currentPassword || !passwordData.newPassword) {
+        throw new Error('Current password and new password are required');
+      }
+
+      // Validate password length
+      if (passwordData.newPassword.length < 6) {
+        throw new Error('New password must be at least 6 characters long');
+      }
+
       const response = await api.put('/auth/change-password', passwordData);
       console.log('✅ Password changed successfully');
       return response.data;
     } catch (error) {
       console.error('❌ Change password error:', error);
-      throw new Error(error.response?.data?.message || 'Failed to change password');
+      throw error;
     }
   },
 

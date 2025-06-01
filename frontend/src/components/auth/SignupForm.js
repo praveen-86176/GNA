@@ -9,6 +9,12 @@ const validateForm = () => {
   // Email validation
   if (!formData.email) {
     newErrors.email = 'Email is required';
+  } else {
+    // Email format validation
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(formData.email)) {
+      newErrors.email = 'Please enter a valid email address';
+    }
   }
 
   // Password validation  

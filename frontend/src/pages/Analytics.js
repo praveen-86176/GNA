@@ -243,15 +243,15 @@ const Analytics = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-[#e11d48] to-[#9333ea] flex items-center justify-center">
         <Loading size="lg" text="Loading analytics..." />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
-      <div className="px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#e11d48] to-[#9333ea]">
+      <div className="container mx-auto px-4 py-8">
         <div className="max-w-7xl mx-auto">
           
           {/* Header */}
@@ -263,8 +263,8 @@ const Analytics = () => {
           >
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Analytics Dashboard</h1>
-                <p className="text-lg text-gray-600 mt-1">
+                <h1 className="text-3xl font-bold text-white">Analytics Dashboard</h1>
+                <p className="text-lg text-gray-100 mt-1">
                   Detailed insights and performance metrics
                 </p>
               </div>
@@ -274,7 +274,7 @@ const Analytics = () => {
                 <select
                   value={timeRange}
                   onChange={(e) => setTimeRange(e.target.value)}
-                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900"
                 >
                   <option value="24h">Last 24 Hours</option>
                   <option value="7d">Last 7 Days</option>
@@ -288,6 +288,7 @@ const Analytics = () => {
                   loading={refreshing}
                   variant="secondary"
                   icon={ArrowPathIcon}
+                  className="bg-white text-gray-900 hover:bg-gray-100"
                 >
                   Refresh
                 </Button>
@@ -304,7 +305,7 @@ const Analytics = () => {
           >
             {/* Total Orders */}
             <motion.div variants={staggerItem}>
-              <Card hover className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+              <Card hover className="bg-white shadow-lg">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-2">
                     <ShoppingBagIcon className="h-8 w-8 text-blue-600" />
@@ -313,15 +314,15 @@ const Analytics = () => {
                       <PercentageCounter value={Math.abs(analytics.trends.ordersGrowth)} className="text-sm font-medium" />
                     </div>
                   </div>
-                  <p className="text-sm font-medium text-blue-600 mb-1">Total Orders</p>
-                  <Counter value={analytics.overview.totalOrders} className="text-2xl font-bold text-blue-900" />
+                  <p className="text-sm font-medium text-gray-700 mb-1">Total Orders</p>
+                  <Counter value={analytics.overview.totalOrders} className="text-2xl font-bold text-gray-900" />
                 </CardContent>
               </Card>
             </motion.div>
 
             {/* Total Revenue */}
             <motion.div variants={staggerItem}>
-              <Card hover className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
+              <Card hover className="bg-white shadow-lg">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-2">
                     <CurrencyRupeeIcon className="h-8 w-8 text-green-600" />
@@ -330,41 +331,41 @@ const Analytics = () => {
                       <PercentageCounter value={Math.abs(analytics.trends.revenueGrowth)} className="text-sm font-medium" />
                     </div>
                   </div>
-                  <p className="text-sm font-medium text-green-600 mb-1">Total Revenue</p>
-                  <CurrencyCounter value={analytics.overview.totalRevenue} className="text-2xl font-bold text-green-900" />
+                  <p className="text-sm font-medium text-gray-700 mb-1">Total Revenue</p>
+                  <CurrencyCounter value={analytics.overview.totalRevenue} className="text-2xl font-bold text-gray-900" />
                 </CardContent>
               </Card>
             </motion.div>
 
             {/* Average Order Value */}
             <motion.div variants={staggerItem}>
-              <Card hover className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
+              <Card hover className="bg-white shadow-lg">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-2">
                     <ChartBarIcon className="h-8 w-8 text-purple-600" />
                   </div>
-                  <p className="text-sm font-medium text-purple-600 mb-1">Avg Order Value</p>
-                  <CurrencyCounter value={analytics.overview.averageOrderValue} className="text-2xl font-bold text-purple-900" />
+                  <p className="text-sm font-medium text-gray-700 mb-1">Avg Order Value</p>
+                  <CurrencyCounter value={analytics.overview.averageOrderValue} className="text-2xl font-bold text-gray-900" />
                 </CardContent>
               </Card>
             </motion.div>
 
             {/* Delivery Success */}
             <motion.div variants={staggerItem}>
-              <Card hover className="bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200">
+              <Card hover className="bg-white shadow-lg">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-2">
                     <FireIcon className="h-8 w-8 text-amber-600" />
                   </div>
-                  <p className="text-sm font-medium text-amber-600 mb-1">Success Rate</p>
-                  <PercentageCounter value={analytics.overview.deliverySuccess} className="text-2xl font-bold text-amber-900" />
+                  <p className="text-sm font-medium text-gray-700 mb-1">Success Rate</p>
+                  <PercentageCounter value={analytics.overview.deliverySuccess} className="text-2xl font-bold text-gray-900" />
                 </CardContent>
               </Card>
             </motion.div>
 
             {/* Active Partners */}
             <motion.div variants={staggerItem}>
-              <Card hover className="bg-gradient-to-br from-indigo-50 to-indigo-100 border-indigo-200">
+              <Card hover className="bg-white shadow-lg">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-2">
                     <UserGroupIcon className="h-8 w-8 text-indigo-600" />
@@ -373,15 +374,15 @@ const Analytics = () => {
                       <PercentageCounter value={Math.abs(analytics.trends.partnersGrowth)} className="text-sm font-medium" />
                     </div>
                   </div>
-                  <p className="text-sm font-medium text-indigo-600 mb-1">Active Partners</p>
-                  <Counter value={analytics.overview.activePartners} className="text-2xl font-bold text-indigo-900" />
+                  <p className="text-sm font-medium text-gray-700 mb-1">Active Partners</p>
+                  <Counter value={analytics.overview.activePartners} className="text-2xl font-bold text-gray-900" />
                 </CardContent>
               </Card>
             </motion.div>
 
             {/* Average Delivery Time */}
             <motion.div variants={staggerItem}>
-              <Card hover className="bg-gradient-to-br from-red-50 to-red-100 border-red-200">
+              <Card hover className="bg-white shadow-lg">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-2">
                     <ClockIcon className="h-8 w-8 text-red-600" />
@@ -390,10 +391,10 @@ const Analytics = () => {
                       <span className="text-sm font-medium">{Math.abs(analytics.trends.deliveryTimeChange)}m</span>
                     </div>
                   </div>
-                  <p className="text-sm font-medium text-red-600 mb-1">Avg Delivery Time</p>
+                  <p className="text-sm font-medium text-gray-700 mb-1">Avg Delivery Time</p>
                   <div className="flex items-center">
-                    <Counter value={analytics.overview.averageDeliveryTime} className="text-2xl font-bold text-red-900" />
-                    <span className="text-2xl font-bold text-red-900 ml-1">min</span>
+                    <Counter value={analytics.overview.averageDeliveryTime} className="text-2xl font-bold text-gray-900" />
+                    <span className="text-2xl font-bold text-gray-900 ml-1">min</span>
                   </div>
                 </CardContent>
               </Card>
@@ -409,17 +410,26 @@ const Analytics = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
             >
-              <Card variant="elevated">
+              <Card variant="elevated" className="bg-white shadow-lg">
                 <CardHeader>
                   <CardTitle className="flex items-center">
-                    <DocumentChartBarIcon className="h-6 w-6 mr-2 text-blue-600" />
-                    Orders by Status
+                    <div className="flex items-center space-x-3">
+                      <div className="p-2 bg-purple-100 rounded-lg">
+                        <ChartBarIcon className="h-6 w-6 text-purple-600" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900">Orders by Status</p>
+                        <p className="text-sm text-gray-600">
+                          Distribution of orders across different statuses
+                        </p>
+                      </div>
+                    </div>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
                     {analytics.charts.ordersByStatus.map((item, index) => (
-                      <div key={item.status} className="flex items-center justify-between">
+                      <div key={item.status} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                         <div className="flex items-center space-x-3">
                           <div className={`w-4 h-4 rounded-full ${getStatusColor(item.status).split(' ')[1]}`}></div>
                           <span className="font-medium text-gray-900 capitalize">
@@ -427,7 +437,7 @@ const Analytics = () => {
                           </span>
                         </div>
                         <div className="flex items-center space-x-4">
-                          <span className="text-sm text-gray-500">{item.percentage}%</span>
+                          <span className="text-sm font-medium text-gray-600">{item.percentage}%</span>
                           <span className="font-bold text-gray-900">{item.count}</span>
                         </div>
                       </div>
@@ -443,11 +453,20 @@ const Analytics = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
             >
-              <Card variant="elevated">
+              <Card variant="elevated" className="bg-white shadow-lg">
                 <CardHeader>
                   <CardTitle className="flex items-center">
-                    <ChartBarIcon className="h-6 w-6 mr-2 text-green-600" />
-                    Revenue by Day
+                    <div className="flex items-center space-x-3">
+                      <div className="p-2 bg-green-100 rounded-lg">
+                        <CurrencyRupeeIcon className="h-6 w-6 text-green-600" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900">Revenue by Day</p>
+                        <p className="text-sm text-gray-600">
+                          Daily revenue breakdown
+                        </p>
+                      </div>
+                    </div>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -457,21 +476,21 @@ const Analytics = () => {
                       const percentage = (item.revenue / maxRevenue) * 100;
                       
                       return (
-                        <div key={item.day} className="flex items-center justify-between">
+                        <div key={item.day} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                           <div className="flex items-center space-x-3 w-20">
                             <span className="font-medium text-gray-900">{item.day}</span>
                           </div>
                           <div className="flex-1 mx-4">
-                            <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div className="w-full bg-gray-200 rounded-full h-2.5">
                               <motion.div
-                                className="bg-green-500 h-2 rounded-full"
+                                className="bg-green-500 h-2.5 rounded-full"
                                 initial={{ width: 0 }}
                                 animate={{ width: `${percentage}%` }}
                                 transition={{ duration: 1, delay: index * 0.1 }}
                               />
                             </div>
                           </div>
-                          <span className="font-bold text-gray-900 text-sm w-20 text-right">
+                          <span className="font-bold text-gray-900 text-sm w-24 text-right">
                             {formatCurrency(item.revenue)}
                           </span>
                         </div>

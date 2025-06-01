@@ -30,7 +30,7 @@ const Header = ({
   onSearchChange 
 }) => {
   const { user, logout } = useAuth();
-  const { isDarkMode, isSystemPreference, toggleTheme, setTheme, useSystemPreference } = useTheme();
+  const { isDarkMode, isSystemPreference, toggleDarkMode, setTheme } = useTheme();
   const { notifications, unreadCount, markAsRead, markAllAsRead, removeNotification } = useNotifications();
   const navigate = useNavigate();
   
@@ -324,7 +324,7 @@ const Header = ({
                       
                       <button
                         onClick={() => {
-                          useSystemPreference();
+                          setTheme('system');
                           setShowThemeMenu(false);
                         }}
                         className={cn(

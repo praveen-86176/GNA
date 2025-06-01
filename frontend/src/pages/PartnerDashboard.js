@@ -418,6 +418,40 @@ const PartnerDashboard = () => {
         updatePartnerStatus(newStatus, currentOrder?._id);
       }
       
+      // Update status in global storage for manager visibility
+      const globalOrders = JSON.parse(localStorage.getItem('global_orders') || '[]');
+      const updatedGlobalOrders = globalOrders.map(order => {
+        if (order.assignedPartner === (user._id || user.id)) {
+          return {
+            ...order,
+            partnerStatus: newStatus,
+            updatedAt: new Date().toISOString()
+          };
+        }
+        return order;
+      });
+      localStorage.setItem('global_orders', JSON.stringify(updatedGlobalOrders));
+      
+      // Update partner status in manager's view
+      const partnerStatuses = JSON.parse(localStorage.getItem('partner_statuses') || '{}');
+      partnerStatuses[user._id || user.id] = {
+        status: newStatus,
+        currentOrder: currentOrder?._id,
+        updatedAt: new Date().toISOString(),
+        partnerName: user.name
+      };
+      localStorage.setItem('partner_statuses', JSON.stringify(partnerStatuses));
+      
+      // Broadcast status change to all connected clients
+      window.dispatchEvent(new CustomEvent('partnerStatusChanged', {
+        detail: {
+          partnerId: user._id || user.id,
+          partnerName: user.name,
+          newStatus,
+          currentOrder: currentOrder?._id
+        }
+      }));
+      
       // Simulate API call (since we're in demo mode)
       await new Promise(resolve => setTimeout(resolve, 500));
       
@@ -598,38 +632,38 @@ const PartnerDashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 flex items-center justify-center">
+      <div className="min-h-screen" style={{ background: 'linear-gradient(to bottom right, #e11d48, #9333ea)' }}>
         <Loading size="lg" text="Loading your dashboard..." />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 pb-6">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div className="min-h-screen" style={{ background: 'linear-gradient(to bottom right, #e11d48, #9333ea)' }}>
+      <div className="max-w-7xl mx-auto p-6">
         
         {/* Header Section */}
         <motion.div
           className="mb-8"
-          initial={fadeInUp.initial}
-          animate={fadeInUp.animate}
-          transition={fadeInUp.transition}
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
         >
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             {/* Welcome Section */}
             <div className="flex items-center space-x-4">
               <motion.div
-                className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg"
+                className="w-16 h-16 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg"
                 whileHover={{ scale: 1.05, rotate: 5 }}
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
               >
                 <UserCircleIcon className="h-8 w-8 text-white" />
               </motion.div>
               <div>
-                <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">
+                <h1 className="text-2xl lg:text-3xl font-bold text-white">
                   Welcome back, {user?.name}! 👋
                 </h1>
-                <p className="text-lg text-gray-600 mt-1">
+                <p className="text-lg text-white/80 mt-1">
                   Ready to deliver excellence today?
                 </p>
               </div>
@@ -642,8 +676,8 @@ const PartnerDashboard = () => {
                 className={cn(
                   "px-4 py-2 rounded-full text-sm font-medium",
                   connected 
-                    ? "bg-green-100 text-green-800" 
-                    : "bg-red-100 text-red-800"
+                    ? "bg-white/20 text-white" 
+                    : "bg-red-500/20 text-white"
                 )}
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
@@ -654,8 +688,8 @@ const PartnerDashboard = () => {
 
               {/* Partner Status Toggle */}
               <div className="flex items-center space-x-3">
-                <span className="text-sm font-medium text-gray-700">Status:</span>
-                <div className="flex bg-white rounded-xl p-1 shadow-md">
+                <span className="text-sm font-medium text-white">Status:</span>
+                <div className="flex bg-white/10 backdrop-blur-sm rounded-xl p-1 shadow-md">
                   {['available', 'busy', 'offline'].map((status) => (
                     <motion.button
                       key={status}
@@ -664,8 +698,8 @@ const PartnerDashboard = () => {
                       className={cn(
                         "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200",
                         partnerStatus === status
-                          ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-md"
-                          : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                          ? "bg-white text-indigo-600 shadow-md"
+                          : "text-white hover:bg-white/20"
                       )}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
@@ -692,22 +726,22 @@ const PartnerDashboard = () => {
         >
           {/* Today's Deliveries */}
           <motion.div variants={staggerItem}>
-            <Card hover className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 h-full">
+            <Card hover className="bg-white/10 backdrop-blur-sm border-white/20 h-full">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-blue-600 mb-1">Today's Deliveries</p>
+                    <p className="text-sm font-medium text-white/80 mb-1">Today's Deliveries</p>
                     <Counter 
                       value={statistics.todayDeliveries} 
-                      className="text-3xl font-bold text-blue-900"
+                      className="text-3xl font-bold text-white"
                     />
                     <div className="flex items-center mt-2">
-                      <TruckIcon className="h-4 w-4 text-blue-500 mr-1" />
-                      <span className="text-sm text-blue-600">Active</span>
+                      <TruckIcon className="h-4 w-4 text-white/80 mr-1" />
+                      <span className="text-sm text-white/80">Active</span>
                     </div>
                   </div>
                   <motion.div
-                    className="p-3 bg-blue-500 rounded-xl shadow-lg"
+                    className="p-3 bg-white/20 rounded-xl shadow-lg"
                     whileHover={{ scale: 1.1, rotate: 5 }}
                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
                   >
@@ -720,22 +754,22 @@ const PartnerDashboard = () => {
 
           {/* Today's Earnings */}
           <motion.div variants={staggerItem}>
-            <Card hover className="bg-gradient-to-br from-green-50 to-green-100 border-green-200 h-full">
+            <Card hover className="bg-white/10 backdrop-blur-sm border-white/20 h-full">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-green-600 mb-1">Today's Earnings</p>
+                    <p className="text-sm font-medium text-white/80 mb-1">Today's Earnings</p>
                     <CurrencyCounter 
                       value={statistics.todayEarnings} 
-                      className="text-3xl font-bold text-green-900"
+                      className="text-3xl font-bold text-white"
                     />
                     <div className="flex items-center mt-2">
-                      <ArrowUpIcon className="h-4 w-4 text-green-500 mr-1" />
-                      <span className="text-sm text-green-600">+12.5%</span>
+                      <ArrowUpIcon className="h-4 w-4 text-white/80 mr-1" />
+                      <span className="text-sm text-white/80">+12.5%</span>
                     </div>
                   </div>
                   <motion.div
-                    className="p-3 bg-green-500 rounded-xl shadow-lg"
+                    className="p-3 bg-white/20 rounded-xl shadow-lg"
                     whileHover={{ scale: 1.1, rotate: 5 }}
                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
                   >
@@ -748,26 +782,26 @@ const PartnerDashboard = () => {
 
           {/* Rating */}
           <motion.div variants={staggerItem}>
-            <Card hover className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 h-full">
+            <Card hover className="bg-white/10 backdrop-blur-sm border-white/20 h-full">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-purple-600 mb-1">Average Rating</p>
+                    <p className="text-sm font-medium text-white/80 mb-1">Average Rating</p>
                     <div className="flex items-center">
                       <Counter 
                         value={statistics.averageRating} 
                         decimals={1}
-                        className="text-3xl font-bold text-purple-900"
+                        className="text-3xl font-bold text-white"
                       />
                       <StarIcon className="h-6 w-6 text-yellow-400 ml-2 fill-current" />
                     </div>
                     <div className="flex items-center mt-2">
-                      <TrophyIcon className="h-4 w-4 text-purple-500 mr-1" />
-                      <span className="text-sm text-purple-600">Excellent</span>
+                      <TrophyIcon className="h-4 w-4 text-white/80 mr-1" />
+                      <span className="text-sm text-white/80">Excellent</span>
                     </div>
                   </div>
                   <motion.div
-                    className="p-3 bg-purple-500 rounded-xl shadow-lg"
+                    className="p-3 bg-white/20 rounded-xl shadow-lg"
                     whileHover={{ scale: 1.1, rotate: 5 }}
                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
                   >
@@ -780,22 +814,22 @@ const PartnerDashboard = () => {
 
           {/* Completion Rate */}
           <motion.div variants={staggerItem}>
-            <Card hover className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200 h-full">
+            <Card hover className="bg-white/10 backdrop-blur-sm border-white/20 h-full">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-orange-600 mb-1">Completion Rate</p>
+                    <p className="text-sm font-medium text-white/80 mb-1">Completion Rate</p>
                     <PercentageCounter 
                       value={statistics.completionRate} 
-                      className="text-3xl font-bold text-orange-900"
+                      className="text-3xl font-bold text-white"
                     />
                     <div className="flex items-center mt-2">
-                      <ShieldCheckIcon className="h-4 w-4 text-orange-500 mr-1" />
-                      <span className="text-sm text-orange-600">Reliable</span>
+                      <ShieldCheckIcon className="h-4 w-4 text-white/80 mr-1" />
+                      <span className="text-sm text-white/80">Reliable</span>
                     </div>
                   </div>
                   <motion.div
-                    className="p-3 bg-orange-500 rounded-xl shadow-lg"
+                    className="p-3 bg-white/20 rounded-xl shadow-lg"
                     whileHover={{ scale: 1.1, rotate: 5 }}
                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
                   >
@@ -948,57 +982,44 @@ const PartnerDashboard = () => {
                       {availableOrders.map((order, index) => (
                         <motion.div
                           key={order._id}
-                          className="border border-gray-200 rounded-xl p-4 hover:shadow-md transition-all duration-200 bg-white"
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: index * 0.1 }}
-                          whileHover={{ scale: 1.02 }}
+                          className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20"
                         >
                           <div className="flex items-center justify-between mb-3">
                             <div className="flex items-center space-x-3">
-                              <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
-                                <span className="text-indigo-600 font-semibold text-sm">
+                              <div className="w-10 h-10 bg-gradient-to-r from-rose-500 to-purple-500 rounded-full flex items-center justify-center">
+                                <span className="text-white font-semibold text-sm">
                                   #{order.orderId?.slice(-3) || '000'}
                                 </span>
                               </div>
                               <div>
-                                <p className="font-semibold text-gray-900">{order.customerName}</p>
-                                <p className="text-sm text-gray-500">{formatTime(order.createdAt)}</p>
+                                <p className="font-semibold text-white">{order.customerName}</p>
+                                <p className="text-sm text-white/70">{formatTime(order.createdAt)}</p>
                               </div>
                             </div>
                             <div className="text-right">
-                              <p className="text-lg font-bold text-gray-900">
+                              <p className="text-lg font-bold text-white">
                                 {formatCurrency(order.totalAmount)}
                               </p>
                               <StatusBadge status={order.status} size="sm" />
                             </div>
                           </div>
                           
-                          <div className="flex items-center text-sm text-gray-600 mb-3">
+                          <div className="flex items-center text-sm text-white/70 mb-3">
                             <MapPinIcon className="h-4 w-4 mr-1" />
                             <span className="truncate">{order.customerAddress}</span>
                           </div>
                           
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-4 text-sm text-gray-500">
-                              <span className="flex items-center">
-                                <ClockIcon className="h-4 w-4 mr-1" />
-                                ~25 min
-                              </span>
-                              <span className="flex items-center">
-                                <GlobeAltIcon className="h-4 w-4 mr-1" />
-                                2.5 km
-                              </span>
-                            </div>
-                            
-                            <Button
-                              onClick={() => handleAcceptOrder(order._id)}
-                              size="sm"
-                              className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700"
-                            >
-                              Accept Order
-                            </Button>
-                          </div>
+                          <Button
+                            onClick={() => handleAcceptOrder(order._id)}
+                            fullWidth
+                            size="sm"
+                            className="bg-white text-indigo-600 hover:bg-gray-100"
+                          >
+                            Accept Order
+                          </Button>
                         </motion.div>
                       ))}
                     </div>

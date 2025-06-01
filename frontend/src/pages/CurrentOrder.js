@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import {
   MapPinIcon,
   PhoneIcon,
@@ -28,6 +29,7 @@ const CurrentOrder = () => {
   const [currentOrder, setCurrentOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadCurrentOrder();
@@ -143,7 +145,12 @@ const CurrentOrder = () => {
       const globalOrders = JSON.parse(localStorage.getItem('global_orders') || '[]');
       const updatedGlobalOrders = globalOrders.map(order => 
         order._id === currentOrder._id 
-          ? { ...order, status: newStatus, updatedAt: new Date().toISOString() }
+          ? { 
+              ...order, 
+              status: newStatus, 
+              updatedAt: new Date().toISOString(),
+              partnerStatus: 'busy' // Ensure partner is marked as busy while handling order
+            }
           : order
       );
       localStorage.setItem('global_orders', JSON.stringify(updatedGlobalOrders));
@@ -158,8 +165,29 @@ const CurrentOrder = () => {
         console.log('✅ Auth storage updated with status:', newStatus);
       }
       
+      // Update partner status in manager's view
+      const partnerStatuses = JSON.parse(localStorage.getItem('partner_statuses') || '{}');
+      partnerStatuses[user._id || user.id] = {
+        status: 'busy',
+        currentOrder: updatedOrder._id,
+        updatedAt: new Date().toISOString(),
+        partnerName: user.name,
+        orderStatus: newStatus
+      };
+      localStorage.setItem('partner_statuses', JSON.stringify(partnerStatuses));
+      
       // Update the AuthContext to keep it in sync
       updatePartnerStatus('busy', updatedOrder._id);
+      
+      // Broadcast status change to all connected clients
+      window.dispatchEvent(new CustomEvent('orderStatusChanged', {
+        detail: {
+          orderId: currentOrder._id,
+          newStatus,
+          partnerId: user._id || user.id,
+          partnerName: user.name
+        }
+      }));
       
       toast.success(`Order status updated to ${newStatus}`, {
         icon: newStatus === 'DELIVERED' ? '✅' : '📝',
@@ -206,9 +234,28 @@ const CurrentOrder = () => {
         // Clear current order from AuthContext when delivered
         updatePartnerStatus('available', null);
         
+        // Update partner status in manager's view to available
+        partnerStatuses[user._id || user.id] = {
+          status: 'available',
+          currentOrder: null,
+          updatedAt: new Date().toISOString(),
+          partnerName: user.name
+        };
+        localStorage.setItem('partner_statuses', JSON.stringify(partnerStatuses));
+        
         // Remove order from global orders (mark as completed)
         const finalGlobalOrders = globalOrders.filter(order => order._id !== currentOrder._id);
         localStorage.setItem('global_orders', JSON.stringify(finalGlobalOrders));
+        
+        // Broadcast partner status change to available
+        window.dispatchEvent(new CustomEvent('partnerStatusChanged', {
+          detail: {
+            partnerId: user._id || user.id,
+            partnerName: user.name,
+            newStatus: 'available',
+            currentOrder: null
+          }
+        }));
         
         setTimeout(() => {
           setCurrentOrder(null);
@@ -275,7 +322,7 @@ const CurrentOrder = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 flex items-center justify-center">
+      <div className="min-h-screen" style={{ background: 'linear-gradient(to bottom right, #e11d48, #9333ea)' }}>
         <Loading size="lg" text="Loading current order..." />
       </div>
     );
@@ -283,8 +330,8 @@ const CurrentOrder = () => {
 
   if (!currentOrder) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 p-6">
-        <div className="max-w-4xl mx-auto">
+      <div className="min-h-screen" style={{ background: 'linear-gradient(to bottom right, #e11d48, #9333ea)' }}>
+        <div className="max-w-4xl mx-auto p-6">
           <motion.div
             className="text-center py-16"
             initial={{ opacity: 0, y: 20 }}
@@ -302,13 +349,13 @@ const CurrentOrder = () => {
             <h1 className="text-3xl font-bold text-gray-900 mb-4">
               No Active Order
             </h1>
-            <p className="text-lg text-gray-600 mb-8">
+            <p className="text-lg text-white/90 mb-8">
               You don't have any active orders at the moment. Check your dashboard for available orders.
             </p>
             <Button
-              onClick={() => window.location.href = '/partner-dashboard'}
+              onClick={() => navigate('/partner-dashboard')}
               size="lg"
-              className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700"
+              className="bg-rose-500/20 text-white hover:bg-rose-500/30 backdrop-blur-sm"
             >
               Go to Dashboard
             </Button>
@@ -319,8 +366,8 @@ const CurrentOrder = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 p-6">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen" style={{ background: 'linear-gradient(to bottom right, #e11d48, #9333ea)' }}>
+      <div className="max-w-4xl mx-auto p-6">
         
         {/* Header */}
         <motion.div
@@ -331,14 +378,14 @@ const CurrentOrder = () => {
         >
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Current Order</h1>
-              <p className="text-lg text-gray-600 mt-1">
+              <h1 className="text-3xl font-bold text-white drop-shadow-lg">Current Order</h1>
+              <p className="text-lg text-white/90 mt-1 drop-shadow">
                 Manage your active delivery
               </p>
             </div>
             <div className="flex items-center space-x-4">
               <div className={`px-4 py-2 rounded-full text-sm font-medium ${
-                connected ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                connected ? 'bg-white/30 text-white drop-shadow' : 'bg-red-500/30 text-white drop-shadow'
               }`}>
                 {connected ? '🟢 Live Connected' : '🔴 Offline'}
               </div>
@@ -352,57 +399,57 @@ const CurrentOrder = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <Card variant="elevated" className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white overflow-hidden mb-8">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+          <Card variant="elevated" className="bg-white/20 backdrop-blur-md border-white/30 text-white overflow-hidden mb-8 shadow-xl">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full -mr-16 -mt-16"></div>
             <CardHeader>
-              <CardTitle className="text-white flex items-center justify-between">
+              <CardTitle className="text-white flex items-center justify-between drop-shadow">
                 <span className="flex items-center">
                   <TruckIcon className="h-6 w-6 mr-2" />
                   Order #{currentOrder.orderId}
                 </span>
-                <StatusBadge status={currentOrder.status} className="bg-white/20" />
+                <StatusBadge status={currentOrder.status} className="bg-white/30" />
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Customer Details */}
                 <div>
-                  <h3 className="text-lg font-semibold text-white mb-4">Customer Details</h3>
+                  <h3 className="text-lg font-semibold text-white mb-4 drop-shadow">Customer Details</h3>
                   <div className="space-y-3">
                     <div className="flex items-center">
-                      <UserIcon className="h-5 w-5 text-white/70 mr-3" />
-                      <span className="text-white">{currentOrder.customerName}</span>
+                      <UserIcon className="h-5 w-5 text-white/90 mr-3" />
+                      <span className="text-white drop-shadow-sm">{currentOrder.customerName}</span>
                     </div>
                     <div className="flex items-center">
-                      <PhoneIcon className="h-5 w-5 text-white/70 mr-3" />
-                      <span className="text-white">{currentOrder.customerPhone}</span>
+                      <PhoneIcon className="h-5 w-5 text-white/90 mr-3" />
+                      <span className="text-white drop-shadow-sm">{currentOrder.customerPhone}</span>
                     </div>
                     <div className="flex items-start">
-                      <MapPinIcon className="h-5 w-5 text-white/70 mr-3 mt-0.5" />
-                      <span className="text-white">{currentOrder.customerAddress}</span>
+                      <MapPinIcon className="h-5 w-5 text-white/90 mr-3 mt-0.5" />
+                      <span className="text-white drop-shadow-sm">{currentOrder.customerAddress}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Order Info */}
                 <div>
-                  <h3 className="text-lg font-semibold text-white mb-4">Order Information</h3>
+                  <h3 className="text-lg font-semibold text-white mb-4 drop-shadow">Order Information</h3>
                   <div className="space-y-3">
                     <div className="flex items-center">
-                      <CurrencyRupeeIcon className="h-5 w-5 text-white/70 mr-3" />
-                      <span className="text-white font-bold text-xl">
+                      <CurrencyRupeeIcon className="h-5 w-5 text-white/90 mr-3" />
+                      <span className="text-white font-bold text-xl drop-shadow">
                         {formatCurrency(currentOrder.totalAmount)}
                       </span>
                     </div>
                     <div className="flex items-center">
-                      <ClockIcon className="h-5 w-5 text-white/70 mr-3" />
-                      <span className="text-white">{formatTime(currentOrder.createdAt)}</span>
+                      <ClockIcon className="h-5 w-5 text-white/90 mr-3" />
+                      <span className="text-white drop-shadow-sm">{formatTime(currentOrder.createdAt)}</span>
                     </div>
                     <div>
-                      <p className="text-white/70 text-sm mb-2">Items:</p>
+                      <p className="text-white/90 text-sm mb-2 drop-shadow-sm">Items:</p>
                       <div className="space-y-1">
                         {currentOrder.items?.map((item, index) => (
-                          <div key={index} className="text-white text-sm">
+                          <div key={index} className="text-white text-sm drop-shadow-sm">
                             {item.quantity}x {item.name} - {formatCurrency(item.price)}
                           </div>
                         ))}
@@ -423,9 +470,9 @@ const CurrentOrder = () => {
           transition={{ delay: 0.4 }}
         >
           {/* Primary Action */}
-          <Card hover className="md:col-span-2">
+          <Card hover className="md:col-span-2 bg-white/20 backdrop-blur-md border-white/30 shadow-xl">
             <CardContent className="p-6 text-center">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              <h3 className="text-lg font-semibold text-white mb-4 drop-shadow">
                 Next Action Required
               </h3>
               {getNextStatus(currentOrder.status) && (
@@ -434,7 +481,7 @@ const CurrentOrder = () => {
                   loading={updating}
                   size="lg"
                   fullWidth
-                  className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 mb-4"
+                  className="bg-white text-purple-600 hover:bg-white/90 mb-4 shadow-lg"
                 >
                   {getStatusAction(currentOrder.status)}
                 </Button>
@@ -446,6 +493,7 @@ const CurrentOrder = () => {
                   variant="secondary"
                   icon={PhoneIcon}
                   fullWidth
+                  className="bg-white/30 text-white hover:bg-white/40 shadow-lg"
                 >
                   Call Customer
                 </Button>
@@ -455,6 +503,7 @@ const CurrentOrder = () => {
                   variant="secondary"
                   icon={ArrowTopRightOnSquareIcon}
                   fullWidth
+                  className="bg-white/30 text-white hover:bg-white/40 shadow-lg"
                 >
                   Navigate
                 </Button>
@@ -463,9 +512,9 @@ const CurrentOrder = () => {
           </Card>
 
           {/* Quick Stats */}
-          <Card hover>
+          <Card hover className="bg-white/20 backdrop-blur-md border-white/30 shadow-xl">
             <CardContent className="p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              <h3 className="text-lg font-semibold text-white mb-4 drop-shadow">
                 Quick Actions
               </h3>
               <div className="space-y-3">
@@ -475,6 +524,7 @@ const CurrentOrder = () => {
                   icon={ArrowPathIcon}
                   fullWidth
                   size="sm"
+                  className="text-white hover:bg-white/30 shadow-sm"
                 >
                   Refresh Order
                 </Button>
@@ -484,6 +534,7 @@ const CurrentOrder = () => {
                   variant="ghost"
                   fullWidth
                   size="sm"
+                  className="text-white hover:bg-white/30 shadow-sm"
                 >
                   Back to Dashboard
                 </Button>
@@ -493,6 +544,7 @@ const CurrentOrder = () => {
                   variant="ghost"
                   fullWidth
                   size="sm"
+                  className="text-white hover:bg-white/30 shadow-sm"
                 >
                   View History
                 </Button>
